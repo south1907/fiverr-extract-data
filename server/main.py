@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 import json
+import os
 
 DESCRIPTION = __doc__ or ""
 tags_metadata = [
@@ -61,6 +62,12 @@ async def parse(item: Item):
 
 	gigs = data['listings'][0]['gigs']
 
+	# check
+	is_exist = os.path.exists(item.category)
+
+	if not is_exist:
+		os.makedirs('data/' + item.category)
+		print("create new folder: " + item.category)
 
 	with open('data/' + item.category + "/" + str(item.page) + ".json", "w") as f:
 		json.dump(gigs, f, indent=4)
