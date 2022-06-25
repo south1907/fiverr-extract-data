@@ -1,11 +1,16 @@
-function httpGetAsync(url, callback) {
+var url_backend = 'http://localhost:8000'
+var domain = 'https://www.fiverr.com'
+var mainCategory = 'programming-tech'
+var category = 'chatbots'
+
+function httpGetAsync(url, category, page, callback) {
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange = function() { 
 		if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-			var url_backend = 'http://localhost:8000'
-
 			let data = {
-				"data": xmlHttp.responseText
+				"data": xmlHttp.responseText,
+				"category": category,
+				"page": page
 			};
 			let dataStr = JSON.stringify(data);
 
@@ -30,8 +35,11 @@ function httpPostAsync(url, data, callback) {
 	xhr.send(data);
 }
 
-function requestData(url) {
-	httpGetAsync(url, httpPostAsync)
+function requestData(url, category, page) {
+	httpGetAsync(url, category, page, httpPostAsync)
 }
 
-requestData('https://www.fiverr.com/')
+
+for (let i = 1; i < 21; i++) {
+	requestData(url, category, i)
+}

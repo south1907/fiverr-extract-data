@@ -1,2 +1,3 @@
 __pycache__
-test.html
+data/*
+!data/__init__

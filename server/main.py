@@ -6,6 +6,8 @@ Backend parse data from client, save data
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from pydantic import BaseModel
+from bs4 import BeautifulSoup
+import json
 
 DESCRIPTION = __doc__ or ""
 tags_metadata = [
@@ -13,6 +15,8 @@ tags_metadata = [
 		"name": "Home"
 	}
 ]
+
+root_domain = 'https://www.fiverr.com'
 
 app = FastAPI(
 	title="Backend parse data",
@@ -41,17 +45,27 @@ async def index():
 
 
 class Item(BaseModel):
-    data: str
+	data: str
+	category: str
+	page: int
 
 @app.post("/")
 async def parse(item: Item):
 	"""
 	Parse api
 	"""
+	text_html = item.data
+	soup = BeautifulSoup(text_html, "lxml")
+	find = soup.find('script', {'id': 'perseus-initial-props'})
+	data = json.loads(find.string)
 
-	# TODO: parse html
-	with open('test.html', 'w') as f:
-		f.write(item.data)
+	gigs = data['listings'][0]['gigs']
+
+
+	with open('data/' + item.category + "/" + str(item.page) + ".json", "w") as f:
+		json.dump(gigs, f, indent=4)
+
 	return {
-		"data": item
+		"status": True
 	}
+
