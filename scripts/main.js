@@ -41,5 +41,6 @@ function requestData(url, category, page) {
 
 
 for (let i = 1; i < 21; i++) {
+	var url = domain + '/categories/' + mainCategory + '/' + category + '?page=' + i
 	requestData(url, category, i)
 }
